@@ -99,7 +99,7 @@ namespace Service_SAP_MAX
             Company oCompany = new Company();
             try
             {
-                //logger.Debug("OnTimedEvent");
+                logger.Debug("OnTimedEvent");
 
                 var isConnect =  ConnectSAP.conectCompany(ref oCompany);
 
@@ -107,10 +107,19 @@ namespace Service_SAP_MAX
                 if (isConnect)
                 {
                     List<ConfigClass> listConfig = GetConfig(oCompany);
-                    
+
+                    //GLComponentProcess.Process(ref oCompany, listConfig);
                     //AccountingAccountsProcess.Process(ref oCompany, listConfig);
                     //ExchangeRateProcess.Process(ref oCompany, listConfig);
-                    BusinessPartnerProcess.Process(ref oCompany, listConfig);
+                    //BusinessPartnerProcess.Process(ref oCompany, listConfig);
+                    //ItemsProcess.Process(ref oCompany, listConfig);
+                    //InventoryProcess.Process(ref oCompany, listConfig);
+                    //PurchaseOrderProcess.Process(ref oCompany, listConfig);
+                    //InventoryBalanceProcess.Process(ref oCompany, listConfig);
+                    //CostAdjustmentsProcess.Process(ref oCompany, listConfig);
+                    //ReceiptsReturnsProcess.Process(ref oCompany, listConfig);
+                    //DispatchProcess.Process(ref oCompany, listConfig);
+                    //WarehouseTransferProcess.Process(ref oCompany, listConfig);
                 }
                 else
                 {
@@ -196,18 +205,18 @@ namespace Service_SAP_MAX
                 {
                     List<ConfigClass> listConfig = GetConfig(oCompany);
 
-                    //GLComponentProcess.Process(ref oCompany, listConfig);
-                    //AccountingAccountsProcess.Process(ref oCompany, listConfig);
+                    GLComponentProcess.Process(ref oCompany, listConfig);
+                    AccountingAccountsProcess.Process(ref oCompany, listConfig);
                     ExchangeRateProcess.Process(ref oCompany, listConfig);
-                    ////BusinessPartnerProcess.Process(ref oCompany, listConfig);
-                    //ItemsProcess.Process(ref oCompany, listConfig);
-                    //InventoryProcess.Process(ref oCompany, listConfig);
-                    //PurchaseOrderProcess.Process(ref oCompany, listConfig);
-                    //InventoryBalanceProcess.Process(ref oCompany, listConfig);
-                    //CostAdjustmentsProcess.Process(ref oCompany, listConfig);
-                    //ReceiptsReturnsProcess.Process(ref oCompany, listConfig);
-                    //DispatchProcess.Process(ref oCompany, listConfig);
-                    //WarehouseTransferProcess.Process(ref oCompany, listConfig);
+                    BusinessPartnerProcess.Process(ref oCompany, listConfig);
+                    ItemsProcess.Process(ref oCompany, listConfig);
+                    InventoryProcess.Process(ref oCompany, listConfig);
+                    PurchaseOrderProcess.Process(ref oCompany, listConfig);
+                    InventoryBalanceProcess.Process(ref oCompany, listConfig);
+                    CostAdjustmentsProcess.Process(ref oCompany, listConfig);
+                    ReceiptsReturnsProcess.Process(ref oCompany, listConfig);
+                    DispatchProcess.Process(ref oCompany, listConfig);
+                    WarehouseTransferProcess.Process(ref oCompany, listConfig);
                 }
                 else
                 {

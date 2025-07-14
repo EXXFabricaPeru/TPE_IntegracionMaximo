@@ -31,7 +31,7 @@ namespace Service_SAP_MAX.Process
                 foreach (var item in listComp)
                 {
                     if (string.IsNullOrEmpty(item.idMaximo))
-                        SendGLComponent(item, oCompany, listConfig, url ,maxAuth, authorization);
+                        SendGLComponent(item, oCompany, listConfig, url, maxAuth, authorization);
                     else
                         UpdateGLComponent(item, oCompany, listConfig, url, maxAuth, authorization);
                 }
@@ -48,7 +48,7 @@ namespace Service_SAP_MAX.Process
             try
             {
                 url = url.Replace("?lean=1", "");
-                url = url +  item.idMaximo + "?lean=1";
+                url = url + item.idMaximo + "?lean=1";
 
                 var settings = new JsonSerializerSettings
                 {
@@ -60,9 +60,9 @@ namespace Service_SAP_MAX.Process
                 };
                 settings.ContractResolver = new CustomResolver(new[] { "compvalue", "glorder" });
 
-                var jsonBody = JsonConvert.SerializeObject(item,settings);
+                var jsonBody = JsonConvert.SerializeObject(item, settings);
                 var properties = "active, compvalue, comptext, glorder, orgid, userid, sourcesysid, glcomponentsid";
-                var response = RestHelper.SendRest(url, Method.Post, maxAuth, authorization, jsonBody, properties,"PATCH","MERGE");
+                var response = RestHelper.SendRest(url, Method.Post, maxAuth, authorization, jsonBody, properties, "PATCH", "MERGE");
 
                 if (response.StatusCode == HttpStatusCode.OK)
                 {
@@ -91,7 +91,7 @@ namespace Service_SAP_MAX.Process
             {
                 var jsonBody = JsonConvert.SerializeObject(item);
                 var properties = "active, compvalue, comptext, glorder, orgid, userid, sourcesysid, glcomponentsid";
-                var response = RestHelper.SendRest(url, Method.Post, maxAuth, authorization, jsonBody,properties);
+                var response = RestHelper.SendRest(url, Method.Post, maxAuth, authorization, jsonBody, properties);
 
                 if (response.StatusCode == HttpStatusCode.Created)
                 {
@@ -114,7 +114,7 @@ namespace Service_SAP_MAX.Process
             }
         }
 
-        private static void UpdateState(string state, string message, Company oCompany, GLComponentClass item, string id="")
+        private static void UpdateState(string state, string message, Company oCompany, GLComponentClass item, string id = "")
         {
             Recordset recordset = null;
             try
@@ -128,7 +128,7 @@ namespace Service_SAP_MAX.Process
                     query = $"UPDATE \"OACT\" SET \"{Constants.U_EXX_MAX_STD}\" = '{state}',\"{Constants.U_EXX_MAX_MSJ}\" = '{message}' {setId} WHERE \"AcctCode\"='{item.codeSAP}'";
                 if (item.glorder == 2)
                     query = $"UPDATE \"OPRC\" SET \"{Constants.U_EXX_MAX_STD}\" = '{state}',\"{Constants.U_EXX_MAX_MSJ}\" = '{message}' {setId} WHERE \"PrcCode\"='{item.codeSAP}'";
-                 if (item.glorder == 3)
+                if (item.glorder == 3)
                     query = $"UPDATE \"OPRC\" SET \"{Constants.U_EXX_MAX_STD}\" = '{state}',\"{Constants.U_EXX_MAX_MSJ}\" = '{message}' {setId} WHERE \"PrcCode\"='{item.codeSAP}'";
 
 
@@ -159,54 +159,81 @@ namespace Service_SAP_MAX.Process
             {
                 recordset = (Recordset)oCompany.GetBusinessObject(BoObjectTypes.BoRecordset);
 
-                string query = $@"SELECT TOP 1
-                                ""AcctCode"" as ""codeSAP"",
-                                ""AcctName"" as  ""comptext"",
-                                SUBSTRING(""FormatCode"",0,8)  as ""compvalue"",
-                                1 as ""glorder"",
-                                IFNULL(""U_EXX_MAX_ID"",'') as ""idMaximo"",
-                                    '' as ""Active""
-                                FROM
-                                ""OACT""
-                                WHERE
-                                ""U_EXX_MAX_STD"" = 'P' AND
-                                ""Levels"" = 15 AND  IFNULL(""U_EXX_MAX_ID"",'') <>''
+                string query = $@"SELECT Top 1
+                            ""PrcCode"" as ""codeSAP"",
+                            ""PrcName"" as  ""comptext"",
+                            ""PrcCode"" as ""compvalue"",
+                            0 as ""glorder"",--Centro de Costo
+                            IFNULL(""U_EXX_MAX_ID"",'') as ""idMaximo"",
+                            ""Active""
+                            FROM
+                            ""OPRC""
+                            WHERE
+                            ""U_EXX_MAX_STD"" = 'P' and ""DimCode""=1 AND  IFNULL(""U_EXX_MAX_ID"",'') =''
+
+                            UNION ALL
+
+                            SELECT Top 1
+                            ""PrcCode"" as ""codeSAP"",
+                            ""PrcName"" as  ""comptext"",
+                            ""PrcCode"" as ""compvalue"",
+                            1 as ""glorder"",--Actividad
+                            IFNULL(""U_EXX_MAX_ID"",'') as ""idMaximo"",
+                            ""Active""
+                            FROM
+                            ""OPRC""
+                            WHERE
+                            ""U_EXX_MAX_STD"" = 'P' and ""DimCode""=2  AND  IFNULL(""U_EXX_MAX_ID"",'') =''
+
+                             UNION ALL
+
+                            SELECT Top 1
+                            ""PrcCode"" as ""codeSAP"",
+                            ""PrcName"" as  ""comptext"",
+                            ""PrcCode"" as ""compvalue"",
+                            2 as ""glorder"",--Equipos y ubicaciones
+                            IFNULL(""U_EXX_MAX_ID"",'') as ""idMaximo"",
+                            ""Active""
+                            FROM
+                            ""OPRC""
+                            WHERE
+                            ""U_EXX_MAX_STD"" = 'P' and ""DimCode""=3  AND  IFNULL(""U_EXX_MAX_ID"",'') =''
 
                                 UNION ALL
 
-                                SELECT Top 1
-                                ""PrcCode"" as ""codeSAP"",
-                                ""PrcName"" as  ""comptext"",
-                                ""PrcCode"" as ""compvalue"",
-                                2 as ""glorder"",
-                                IFNULL(""U_EXX_MAX_ID"",'') as ""idMaximo"",
-                                ""Active""
-                                FROM
-                                ""OPRC""
-                                WHERE
-                                ""U_EXX_MAX_STD"" = 'ZZZ' and ""DimCode""=1 AND  IFNULL(""U_EXX_MAX_ID"",'') <>''
+                            SELECT Top 1
+                            ""PrcCode"" as ""codeSAP"",
+                            ""PrcName"" as  ""comptext"",
+                            ""PrcCode"" as ""compvalue"",
+                            3 as ""glorder"",--Tipo de  carga
+                            IFNULL(""U_EXX_MAX_ID"",'') as ""idMaximo"",
+                            ""Active""
+                            FROM
+                            ""OPRC""
+                            WHERE
+                            ""U_EXX_MAX_STD"" = 'P' and ""DimCode""=4  AND  IFNULL(""U_EXX_MAX_ID"",'') =''
 
                                 UNION ALL
 
-                                SELECT Top 1
-                                ""PrcCode"" as ""codeSAP"",
-                                ""PrcName"" as  ""comptext"",
-                                ""PrcCode"" as ""compvalue"",
-                                3 as ""glorder"",
-                                IFNULL(""U_EXX_MAX_ID"",'') as ""idMaximo"",
-                                ""Active""
-                                FROM
-                                ""OPRC""
-                                WHERE
-                                ""U_EXX_MAX_STD"" = 'P' and ""DimCode""=2  AND  IFNULL(""U_EXX_MAX_ID"",'') <>''
+                            SELECT Top 1
+                            ""PrcCode"" as ""codeSAP"",
+                            ""PrcName"" as  ""comptext"",
+                            ""PrcCode"" as ""compvalue"",
+                            4 as ""glorder"",--Producto
+                            IFNULL(""U_EXX_MAX_ID"",'') as ""idMaximo"",
+                            ""Active""
+                            FROM
+                            ""OPRC""
+                            WHERE
+                            ""U_EXX_MAX_STD"" = 'P' and ""DimCode""=5  AND  IFNULL(""U_EXX_MAX_ID"",'') =''
 
-";
+                            ";
                 recordset.DoQuery(query);
 
                 while (!recordset.EoF)
                 {
                     GLComponentClass doc = new GLComponentClass();
-                    doc.active = recordset.Fields.Item("active").Value.ToString() == "Y" ? true:false ;
+                    doc.active = recordset.Fields.Item("active").Value.ToString() == "Y" ? true : false;
                     doc.comptext = (string)recordset.Fields.Item("comptext").Value;
                     doc.codeSAP = (string)recordset.Fields.Item("codeSAP").Value;
                     doc.compvalue = (string)recordset.Fields.Item("compvalue").Value;

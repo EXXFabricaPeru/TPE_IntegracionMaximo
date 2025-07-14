@@ -10,7 +10,7 @@ namespace Service_SAP_MAX.Entities
     public class ChartAccountsClass
     {
         [JsonIgnore]
-        public string idMaximo { get; set; } 
+        public string idMaximo { get; set; }
 
         [JsonIgnore]
         public string codeSAP { get; set; }
@@ -25,5 +25,6 @@ namespace Service_SAP_MAX.Entities
         public string orgid { get; set; }
         public string sendersysid { get; set; }
         public string sourcesysid { get; set; }
+        public string glcomp05 { get; set; }
     }
 }

@@ -157,21 +157,27 @@ namespace Service_SAP_MAX.Process
 
                 string query = $@"SELECT 
                                 ""Code"",
-                                'TPE PAITA' ||' + ' ||
-                                 CT.""AcctName"" ||' + ' || 
-                                 AC.""PrcName"" ||' + ' || 
-                                 CC.""PrcName"" as  ""accountname"",
-                                '01' as ""glcomp01"",
-                                ""U_EXX_GL1"" as ""glcomp02"",
-                                 ""U_EXX_GL2"" as ""glcomp03"",
-                                 ""U_EXX_GL3"" as ""glcomp04"",
+                                 C1.""PrcName"" ||' + ' || 
+                                 C2.""PrcName"" ||' + ' || 
+                                 C3.""PrcName"" ||' + ' || 
+                                 C4.""PrcName"" ||' + ' || 
+                                 C5.""PrcName"" 
+                                 as  ""accountname"",
+                                ""U_EXX_GL1"" as ""glcomp01"",
+                                ""U_EXX_GL2"" as ""glcomp02"",
+                                ""U_EXX_GL3"" as ""glcomp03"",
+                                ""U_EXX_GL4"" as ""glcomp04"",
+                                ""U_EXX_GL5"" as ""glcomp05"",
                                 IFNULL(ACT.""U_EXX_MAX_ID"",'') as ""idMaximo"",
-IFNULL(ACT.""U_EXX_MAX_ACT"",'') as ""active""
+                                IFNULL(ACT.""U_EXX_MAX_ACT"",'') as ""active""
                                 FROM
                                 ""@{Constants.TABLE_ACCT}""   ACT  
-                                INNER JOIN ""OPRC"" CC ON CC.""PrcCode""= ACT.""U_EXX_GL3"" 
-                                INNER JOIN ""OPRC"" AC ON AC.""PrcCode""= ACT.""U_EXX_GL2"" 
-                                INNER JOIN ""OACT"" CT ON SUBSTRING(CT.""FormatCode"",0,8)= ACT.""U_EXX_GL1""    
+                                INNER JOIN ""OPRC"" C1 ON C1.""PrcCode""= ACT.""U_EXX_GL1"" 
+                                INNER JOIN ""OPRC"" C2 ON C2.""PrcCode""= ACT.""U_EXX_GL2"" 
+                                INNER JOIN ""OPRC"" C3 ON C3.""PrcCode""= ACT.""U_EXX_GL3"" 
+                                INNER JOIN ""OPRC"" C4 ON C4.""PrcCode""= ACT.""U_EXX_GL4"" 
+                                INNER JOIN ""OPRC"" C5 ON C5.""PrcCode""= ACT.""U_EXX_GL5"" 
+                                --INNER JOIN ""OACT"" CT ON SUBSTRING(CT.""FormatCode"",0,8)= ACT.""U_EXX_GL1""    
                                 WHERE
                                 ACT.""U_EXX_MAX_STD"" = 'P'
 
@@ -190,6 +196,7 @@ IFNULL(ACT.""U_EXX_MAX_ACT"",'') as ""active""
                     doc.glcomp02 = (string)recordset.Fields.Item("glcomp02").Value;
                     doc.glcomp03 = recordset.Fields.Item("glcomp03").Value.ToString();
                     doc.glcomp04 = recordset.Fields.Item("glcomp04").Value.ToString();
+                    doc.glcomp05 = recordset.Fields.Item("glcomp05").Value.ToString();
                     doc.orgid = "TPE";//(string)recordset.Fields.Item("TableName").Value;
                     doc.sourcesysid = "SAPBO";// (string)recordset.Fields.Item("U_SMC_ESTADO_FE").Value;
                     doc.sendersysid = "SAPBO";// (string)recordset.Fields.Item("U_SMC_ESTADO_FE").Value;

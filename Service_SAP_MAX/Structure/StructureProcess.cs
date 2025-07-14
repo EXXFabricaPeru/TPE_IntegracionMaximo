@@ -49,12 +49,14 @@ namespace Service_SAP_MAX.Structure
         {
             try
             {
+
+
                 if (CreateUserField(oCompany, "POR1", "EXX_MAX_OT", "OT MAX", BoFieldTypes.db_Alpha, 100))
                 {
                     Console.WriteLine("Campo EXX_MAX_MSJ creado POR1 ");
                 }
                 return;
-                
+
                 if (CreateUserField(oCompany, "POR1", "EXX_MAX_LINE", "Línea MAX", BoFieldTypes.db_Alpha, 249))
                 {
                     Console.WriteLine("Campo EXX_MAX_MSJ creado POR1 ");
@@ -117,7 +119,7 @@ namespace Service_SAP_MAX.Structure
                 }
 
 
-               
+
                 if (CreateUserField(oCompany, "OITM", "EXX_MAX_GLA", "GL Account Maximo", BoFieldTypes.db_Alpha, 100))
                 {
                     Console.WriteLine("Campo EXX_MAX_GLA creado OITM ");
@@ -194,6 +196,14 @@ namespace Service_SAP_MAX.Structure
                 if (CreateUserField(oCompany, "@" + Constants.TABLE_ACCT, "EXX_GL3", "GL3", BoFieldTypes.db_Alpha, 100))
                 {
                     logger.Info("Campo EXX_GL3 creado.");
+                }
+                if (CreateUserField(oCompany, "@" + Constants.TABLE_ACCT, "EXX_GL4", "GL4", BoFieldTypes.db_Alpha, 100))
+                {
+                    logger.Info("Campo EXX_GL4 creado.");
+                }
+                if (CreateUserField(oCompany, "@" + Constants.TABLE_ACCT, "EXX_GL5", "GL5", BoFieldTypes.db_Alpha, 100))
+                {
+                    logger.Info("Campo EXX_GL5 creado.");
                 }
                 if (CreateUserField(oCompany, "@" + Constants.TABLE_ACCT, "EXX_MAX_MSJ", "Mensaje MAX", BoFieldTypes.db_Alpha, 249))
                 {
